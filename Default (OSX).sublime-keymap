@@ -176,5 +176,9 @@
 			{ "key": "selector", "operator": "equal", "operand": "prompt.9o" },
 			{ "key": "auto_complete_visible", "operand": false }
 		]
-	}
+	},
+    {
+        "keys": ["super+shift+r"],
+        "command": "gs_gorename"
+    }
 ]
