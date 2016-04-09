@@ -394,12 +394,19 @@ def imports(fn, src, toggle):
 	})
 
 def doc(fn, src, offset, f):
-	tid = gs.begin(DOMAIN, 'Fetching doc info')
+	docTool = gs.setting("doc_hint_tool", "").strip() or "doc"
+	avail = ("doc", "gogetdoc")
+	if docTool not in avail:
+		gs.println("doc_hint_tool '%s' not one of avail %r ; using 'doc'" \
+			% (docTool, avail))
+		docTool = "doc"
+
+	tid = gs.begin(DOMAIN, "Fetching doc info via '%s'" % docTool)
 	def cb(res, err):
 		gs.end(tid)
 		f(res, err)
 
-	acall('doc', {
+	acall(docTool, {
 		'fn': fn or '',
 		'src': src or '',
 		'offset': offset or 0,

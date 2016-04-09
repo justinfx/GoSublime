@@ -97,6 +97,7 @@ _default_settings = {
 	"use_named_imports": False,
 	"installsuffix": "",
 	"ipc_timeout": 1,
+	"doc_hint_tool": "doc",
 }
 _settings = copy.copy(_default_settings)
 

@@ -319,5 +319,11 @@
 	// `GoSublime: HTML` files are html files with the template delimiters `{{` and `}}` tailored to
 	// Go templates (text/template, html/template)
 	// (`.gohtml` files are automatically set by the syntax definition)
-	"gohtml_extensions": [".html.go"]
+	"gohtml_extensions": [".html.go"],
+
+	// Choose between available tools for getting documentation hints. 
+	// `doc`: The custom internal solution provided by MarGo
+	// `gogetdoc`: Delegate to "gogetdoc" tool (Must be installed and available on PATH)
+	//
+	"doc_hint_tool": "doc"
 }

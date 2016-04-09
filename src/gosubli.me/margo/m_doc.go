@@ -1,13 +1,17 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -84,9 +88,61 @@ func (m *mDoc) Call() (interface{}, string) {
 	return res, ""
 }
 
+type mGoGetDoc struct {
+	Fn     string
+	Src    string
+	Offset int
+	Env    map[string]string
+}
+
+func (m *mGoGetDoc) Call() (interface{}, string) {
+	stdErr := bytes.NewBuffer(nil)
+	stdOut := bytes.NewBuffer(nil)
+
+	cmd := exec.Command("gogetdoc", "-pos", fmt.Sprintf("%s:#%d", m.Fn, m.Offset))
+	cmd.Env = envSlice(m.Env)
+	cmd.Stderr = stdErr
+	cmd.Stdout = stdOut
+
+	if m.Src != "" {
+		stdIn := bytes.NewBufferString(m.Fn)
+		stdIn.Write([]byte("\n"))
+		stdIn.WriteString(strconv.Itoa(len(m.Src)))
+		stdIn.Write([]byte("\n"))
+		stdIn.WriteString(m.Src)
+		cmd.Stdin = stdIn
+		cmd.Args = append(cmd.Args, "-modified")
+	}
+
+	postMessage("Running:  %v %v", cmd.Path, cmd.Args)
+
+	err := cmd.Run()
+	if err != nil {
+		msg := fmt.Sprintf("gogetdoc failed: %s\n%s\n%s",
+			err.Error(), stdOut.String(), stdErr.String())
+		postMessage(msg)
+		return nil, msg
+	}
+
+	doc := &Doc{
+		Fn:   m.Fn,
+		Name: "gogetdoc results",
+		Src:  stdOut.String(),
+	}
+
+	res := []*Doc{doc}
+	return res, ""
+}
+
 func init() {
 	registry.Register("doc", func(_ *Broker) Caller {
 		return &mDoc{
+			Env: map[string]string{},
+		}
+	})
+
+	registry.Register("gogetdoc", func(_ *Broker) Caller {
+		return &mGoGetDoc{
 			Env: map[string]string{},
 		}
 	})
