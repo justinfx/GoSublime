@@ -67,7 +67,7 @@ class GsDocCommand(sublime_plugin.TextCommand):
 					doc = '\n\n\n'.join(s).strip()
 			self.show_output(doc or "// %s: no docs found" % DOMAIN)
 
-		mg9.doc(view.file_name(), src, pt, f)
+		mg9.doc(view.file_name(), src, pt, f, mode=mode)
 
 class GsBrowseDeclarationsCommand(sublime_plugin.WindowCommand):
 	def run(self, dir=''):

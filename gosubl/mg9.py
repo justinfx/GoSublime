@@ -393,13 +393,16 @@ def imports(fn, src, toggle):
 		'tabWidth': gs.setting('fmt_tab_width'),
 	})
 
-def doc(fn, src, offset, f):
-	docTool = gs.setting("doc_hint_tool", "").strip() or "doc"
-	avail = ("doc", "gogetdoc")
-	if docTool not in avail:
-		gs.println("doc_hint_tool '%s' not one of avail %r ; using 'doc'" \
-			% (docTool, avail))
-		docTool = "doc"
+def doc(fn, src, offset, f, mode="goto"):
+	docTool = "doc"
+
+	if mode == "hint":
+		docTool = gs.setting("doc_hint_tool", "").strip() or "doc"
+		avail = ("doc", "gogetdoc")
+		if docTool not in avail:
+			gs.println("doc_hint_tool '%s' not one of avail %r ; using 'doc'" \
+				% (docTool, avail))
+			docTool = "doc"
 
 	tid = gs.begin(DOMAIN, "Fetching doc info via '%s'" % docTool)
 	def cb(res, err):
